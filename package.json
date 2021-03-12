@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/Guryanov-Maksim/frontend-project-lvl2/issues"
   },
-  "homepage": "https://github.com/Guryanov-Maksim/frontend-project-lvl2#readme"
+  "homepage": "https://github.com/Guryanov-Maksim/frontend-project-lvl2#readme",
+  "dependencies": {
+    "commander": "^7.1.0"
+  }
 }
