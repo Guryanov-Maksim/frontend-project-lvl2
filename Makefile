@@ -3,4 +3,4 @@ gendiff:
 install:
 	npm install
 test:
-	npx jest
+	npx jest --watch
