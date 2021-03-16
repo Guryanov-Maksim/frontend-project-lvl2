@@ -3,6 +3,6 @@ gendiff:
 install:
 	npm install
 test:
-	npx jest
+	npm test
 lint:
 	npx eslint .
