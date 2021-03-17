@@ -7,3 +7,5 @@
 ## Use
 
 [![asciicast](https://asciinema.org/a/Iz7EiM7Zu3bglIxvEM3XLWW11.svg)](https://asciinema.org/a/Iz7EiM7Zu3bglIxvEM3XLWW11)
+
+[![asciicast](https://asciinema.org/a/6YdPa8tN1XaakBIJtvWPv8fow.svg)](https://asciinema.org/a/6YdPa8tN1XaakBIJtvWPv8fow)
