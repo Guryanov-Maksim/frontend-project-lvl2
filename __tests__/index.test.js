@@ -18,3 +18,12 @@ test('compare two JSON-files', () => {
 
   expect(result).toEqual(expectedResult);
 });
+
+test('compare two YML-files', () => {
+  const beforePath = getFixturePath('before.yml');
+  const afterPath = getFixturePath('after.yml');
+  const expectedResult = readFile('result.txt');
+  const result = getDifference(beforePath, afterPath);
+
+  expect(result).toEqual(expectedResult);
+});
