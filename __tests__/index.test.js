@@ -19,7 +19,7 @@ beforeAll(() => {
 test('compare two JSON-files', () => {
   const beforePath = getFixturePath('before.json');
   const afterPath = getFixturePath('after.json');
-  const result = getDifference(beforePath, afterPath);
+  const result = getDifference(beforePath, afterPath, 'stylish');
 
   expect(result).toEqual(expectedResult);
 });
@@ -27,7 +27,7 @@ test('compare two JSON-files', () => {
 test('compare two YML-files', () => {
   const beforePath = getFixturePath('before.yml');
   const afterPath = getFixturePath('after.yml');
-  const result = getDifference(beforePath, afterPath);
+  const result = getDifference(beforePath, afterPath, 'stylish');
 
   expect(result).toEqual(expectedResult);
 });
