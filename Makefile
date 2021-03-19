@@ -4,6 +4,8 @@ install:
 	npm install
 test:
 	npm test
+test-watch:
+	npx jest --watch
 lint:
 	npx eslint .
 test-coverage:
