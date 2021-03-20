@@ -31,3 +31,11 @@ test('compare two YML-files', () => {
 
   expect(result).toEqual(expectedResult);
 });
+
+test('output plane result', () => {
+  const beforePath = getFixturePath('before.json');
+  const afterPath = getFixturePath('after.json');
+  const result = getDifference(beforePath, afterPath, 'plain');
+  const expectedPlainResult = readFile('plainResult.txt');
+  expect(result).toEqual(expectedPlainResult);
+});
