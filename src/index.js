@@ -2,9 +2,10 @@ import path from 'path';
 import fs from 'fs';
 import _ from 'lodash';
 import parse from './parsers.js';
-import format from './formater.js';
+import format from '../formatters/index.js';
+// import plain from '../formatters/plain.js';
 
-export default (filePath1, filePath2, formatFuncName) => {
+export default (filePath1, filePath2, formatName) => {
   const readFile = (pathToFile) => {
     const fullPath = path.resolve(process.cwd(), pathToFile);
     const data = fs.readFileSync(fullPath, 'utf-8');
@@ -30,7 +31,8 @@ export default (filePath1, filePath2, formatFuncName) => {
         if (!_.has(obj2, fullPath)) {
           return { ...acc, [removedKey]: valueBefore };
         }
-        if (_.isObjectLike(valueAfter) && _.isObjectLike(valueAfter)) {
+        // if (_.isObjectLike(valueAfter) && _.isObjectLike(valueBefore)) {
+        if (_.isObjectLike(obj[key])) {
           return { ...acc, [key]: inner(obj[key], `${fullPath}.`) };
         }
         if (valueBefore !== valueAfter) {
@@ -53,9 +55,14 @@ export default (filePath1, filePath2, formatFuncName) => {
   const obj1 = parse(file1Extention, data1);
   const obj2 = parse(file2Extention, data2);
   const difference = calcDifference(obj1, obj2);
-  if (formatFuncName !== 'stylish') {
-    throw new Error('non supported format option');
-  }
-  const formatedDiff = format(difference);
+
+  // if (formatName === 'plain') {
+  //   const formattedDiff = plain(difference);
+  //   return formattedDiff;
+  // }
+  // if (formatFuncName !== '') {
+  //   throw new Error('non supported format option');
+  // }
+  const formatedDiff = format(difference, formatName);
   return formatedDiff;
 };
