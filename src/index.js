@@ -31,8 +31,7 @@ export default (filePath1, filePath2, formatName) => {
         if (!_.has(obj2, fullPath)) {
           return { ...acc, [removedKey]: valueBefore };
         }
-        // if (_.isObjectLike(valueAfter) && _.isObjectLike(valueBefore)) {
-        if (_.isObjectLike(obj[key])) {
+        if (_.isObjectLike(valueAfter) && _.isObjectLike(valueBefore)) {
           return { ...acc, [key]: inner(obj[key], `${fullPath}.`) };
         }
         if (valueBefore !== valueAfter) {
