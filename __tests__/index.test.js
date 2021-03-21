@@ -10,17 +10,11 @@ const __dirname = dirname(__filename);
 const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
 const readFile = (filename) => fs.readFileSync(getFixturePath(filename), 'utf-8');
 
-let expectedResult;
-
-beforeAll(() => {
-  expectedResult = readFile('result.txt');
-});
-
 test('compare two JSON-files', () => {
   const beforePath = getFixturePath('before.json');
   const afterPath = getFixturePath('after.json');
   const result = getDifference(beforePath, afterPath);
-
+  const expectedResult = readFile('result.txt');
   expect(result).toEqual(expectedResult);
 });
 
@@ -28,7 +22,7 @@ test('compare two YML-files', () => {
   const beforePath = getFixturePath('before.yml');
   const afterPath = getFixturePath('after.yml');
   const result = getDifference(beforePath, afterPath);
-
+  const expectedResult = readFile('result.txt');
   expect(result).toEqual(expectedResult);
 });
 
