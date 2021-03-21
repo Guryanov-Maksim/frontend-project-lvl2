@@ -7,9 +7,7 @@ export default (obj, formatterName) => {
       return JSON.stringify(obj, null, '  ');
     case 'plain':
       return plain(obj);
-    case 'stylish':
-      return stylish(obj);
     default:
-      throw new Error('non supported format');
+      return stylish(obj);
   }
 };
