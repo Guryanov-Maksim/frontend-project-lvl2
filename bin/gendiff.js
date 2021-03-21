@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
-import { program } from 'commander';
+import pkg from 'commander';
 import getDifference from '../lib/index.js';
+
+const { program } = pkg;
 
 program
   .description('Compares two configuration files and shows a difference.')
