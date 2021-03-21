@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { program } from 'commander';
-import getDifference from '../src/index.js';
+import getDifference from '../lib/index.js';
 
 program
   .description('Compares two configuration files and shows a difference.')
