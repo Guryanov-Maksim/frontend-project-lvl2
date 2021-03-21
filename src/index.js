@@ -3,7 +3,6 @@ import fs from 'fs';
 import _ from 'lodash';
 import parse from './parsers.js';
 import format from '../formatters/index.js';
-// import plain from '../formatters/plain.js';
 
 export default (filePath1, filePath2, formatName) => {
   const readFile = (pathToFile) => {
@@ -54,14 +53,6 @@ export default (filePath1, filePath2, formatName) => {
   const obj1 = parse(file1Extention, data1);
   const obj2 = parse(file2Extention, data2);
   const difference = calcDifference(obj1, obj2);
-
-  // if (formatName === 'plain') {
-  //   const formattedDiff = plain(difference);
-  //   return formattedDiff;
-  // }
-  // if (formatFuncName !== '') {
-  //   throw new Error('non supported format option');
-  // }
   const formatedDiff = format(difference, formatName);
   return formatedDiff;
 };
