@@ -39,3 +39,11 @@ test('output plane result', () => {
   const expectedPlainResult = readFile('plainResult.txt');
   expect(result).toEqual(expectedPlainResult);
 });
+
+test('JSON output', () => {
+  const beforePath = getFixturePath('before.json');
+  const afterPath = getFixturePath('after.json');
+  const result = getDifference(beforePath, afterPath, 'json');
+  const expectedJsonResult = readFile('jsonResult.json');
+  expect(result).toEqual(expectedJsonResult);
+});
