@@ -4,7 +4,23 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/31abb43bfd7a3e7213f8/maintainability)](https://codeclimate.com/github/Guryanov-Maksim/frontend-project-lvl2/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/31abb43bfd7a3e7213f8/test_coverage)](https://codeclimate.com/github/Guryanov-Maksim/frontend-project-lvl2/test_coverage)
 
+# gendiff
+
+This library let you compare two files and get the difference between them. 
+
+The following file types are supported:
+- json
+- yml
+
+## Setup
+        make install
+
+## Run tests
+        make test
+
 ## Use
+
+The asciicasts listed below show the use of the library as a cli script
 
 [![asciicast](https://asciinema.org/a/Iz7EiM7Zu3bglIxvEM3XLWW11.svg)](https://asciinema.org/a/Iz7EiM7Zu3bglIxvEM3XLWW11)
 
