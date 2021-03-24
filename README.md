@@ -22,12 +22,17 @@ The following file types are supported:
 
 The asciicasts listed below show the use of the library as a cli script
 
+A comparison of two plain json
 [![asciicast](https://asciinema.org/a/Iz7EiM7Zu3bglIxvEM3XLWW11.svg)](https://asciinema.org/a/Iz7EiM7Zu3bglIxvEM3XLWW11)
 
+A comparison of two plain yml
 [![asciicast](https://asciinema.org/a/6YdPa8tN1XaakBIJtvWPv8fow.svg)](https://asciinema.org/a/6YdPa8tN1XaakBIJtvWPv8fow)
 
+A comparison of two embedded json
 [![asciicast](https://asciinema.org/a/1XTX2u8RwqvhpumH3hUhqlJbN.svg)](https://asciinema.org/a/1XTX2u8RwqvhpumH3hUhqlJbN)
 
+gendiff output in plain format
 [![asciicast](https://asciinema.org/a/yh4u4ITmmzuduaigmauLXkx3o.svg)](https://asciinema.org/a/yh4u4ITmmzuduaigmauLXkx3o)
 
+gendiff output in json format 
 [![asciicast](https://asciinema.org/a/wgvR4ZLy12LmLxrFB1Iocuw54.svg)](https://asciinema.org/a/wgvR4ZLy12LmLxrFB1Iocuw54)
