@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import isObject from '../lib/obj.js';
+import isObject from '../lib/isObject.js';
 
 const normalizeValue = (value) => {
   if (isObject(value)) {
