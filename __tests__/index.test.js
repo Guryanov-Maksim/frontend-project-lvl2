@@ -76,7 +76,6 @@ test.each`
   ${() => paths.jsonBefore} | ${() => paths.jsonAfter} | ${() => results.default} | ${'stylish'}
   ${() => paths.jsonBefore} | ${() => paths.jsonAfter} | ${() => results.plain}   | ${'plain'}
   ${() => paths.jsonBefore} | ${() => paths.jsonAfter} | ${() => results.json}    | ${'json'}
-  ${() => paths.jsonBefore} | ${() => paths.jsonAfter} | ${() => results.default} | ${'wrong'}
 `('output the difference in various formats ($format format)', ({
   getBefore,
   getAfter,
@@ -85,6 +84,10 @@ test.each`
 }) => {
   const result = getDifference(getBefore(), getAfter(), format);
   expect(result).toEqual(getExpected());
+});
+
+test('non supported formatter', () => {
+  expect(() => getDifference(paths.jsonBefore, paths.jsonAfter, 'wrong')).toThrow();
 });
 
 // test('compare two JSON-files', () => {
