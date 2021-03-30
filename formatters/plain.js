@@ -1,46 +1,54 @@
-import _ from 'lodash';
-import isObject from '../lib/isObject.js';
+import isObject from '../src/isObject.js';
+import types from '../src/typesEnum.js';
 
-const normalizeValue = (value) => {
+const {
+  added,
+  removed,
+  nested,
+  updated,
+  unchanged,
+} = types;
+
+const stringify = (value) => {
   if (isObject(value)) {
     return '[complex value]';
   }
   if (typeof value === 'string') {
     return `'${value}'`;
   }
-  return value;
+  return `${value}`;
 };
 
-const getNormalizedValue = (value) => {
-  const { valueBefore, valueAfter } = value;
-  const normalizedValueBefore = normalizeValue(valueBefore);
-  const normalizedValueAfter = normalizeValue(valueAfter);
-  return { normalizedValueBefore, normalizedValueAfter };
+const getStringifiedValues = (values = {}) => {
+  const valueBefore = stringify(values.valueBefore);
+  const valueAfter = stringify(values.valueAfter);
+  return { valueBefore, valueAfter };
 };
 
-export default (object) => {
-  const inner = (node, pathToKey) => {
-    const { key, type } = node;
-    const fullPath = pathToKey.concat(`${key}`);
-    if (!_.has(node, 'children')) {
-      const { value } = node;
-      const normalizedValue = getNormalizedValue(value);
-      if (type === 'added') {
-        const { normalizedValueAfter } = normalizedValue;
-        return `Property '${fullPath}' was added with value: ${normalizedValueAfter}`;
-      }
-      if (type === 'removed') {
-        return `Property '${fullPath}' was removed`;
-      }
-      if (type === 'updated') {
-        const { normalizedValueBefore, normalizedValueAfter } = normalizedValue;
-        return `Property '${fullPath}' was updated. From ${normalizedValueBefore} to ${normalizedValueAfter}`;
-      }
-      return '';
+const convertDiffToPlain = (node, pathToKey) => {
+  const { key, type } = node;
+  const fullPath = pathToKey.concat(`${key}`);
+  const { values } = node;
+  const { valueBefore, valueAfter } = getStringifiedValues(values);
+  switch (type) {
+    case added:
+      return `Property '${fullPath}' was added with value: ${valueAfter}`;
+    case removed:
+      return `Property '${fullPath}' was removed`;
+    case updated:
+      return `Property '${fullPath}' was updated. From ${valueBefore} to ${valueAfter}`;
+    case nested: {
+      const { children } = node;
+      const result = children.map((child) => convertDiffToPlain(child, `${fullPath}.`));
+      return result.filter((item) => item !== '').join('\n');
     }
-    const { children } = node;
-    const result = children.map((child) => inner(child, `${fullPath}.`));
-    return result.filter((item) => item !== '').join('\n');
-  };
-  return object.map((item) => inner(item, '')).join('\n');
+    case unchanged:
+      return '';
+    default:
+      throw new Error(`non supported node type: ${type}`);
+  }
 };
+
+export default (diffTree) => (
+  diffTree.map((node) => convertDiffToPlain(node, '')).join('\n')
+);
