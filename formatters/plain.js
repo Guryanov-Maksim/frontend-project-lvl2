@@ -26,9 +26,8 @@ const getStringifiedValues = (values = {}) => {
 };
 
 const convertDiffToPlain = (node, pathToKey) => {
-  const { key, type } = node;
+  const { key, type, values } = node;
   const fullPath = pathToKey.concat(`${key}`);
-  const { values } = node;
   const { valueBefore, valueAfter } = getStringifiedValues(values);
   switch (type) {
     case added:
