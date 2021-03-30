@@ -1,41 +1,46 @@
-import _ from 'lodash';
 import types from '../src/typesEnum.js';
 
-const { added, removed, updated } = types;
+const {
+  added,
+  removed,
+  updated,
+  nested,
+  unchanged,
+} = types;
 
 const addSign = '+';
 const removeSign = '-';
 
 const convertDiffToObject = (node) => {
-  const { key, type } = node;
+  const { key, type, values = {} } = node;
+  const addedKey = `${addSign} ${key}`;
+  const removedKey = `${removeSign} ${key}`;
   const unchangedKey = `${key}`;
-  if (!_.has(node, 'children')) {
-    const { values } = node;
-    const { valueBefore, valueAfter } = values;
-    const addedKey = `${addSign} ${key}`;
-    const removedKey = `${removeSign} ${key}`;
+  const { valueBefore, valueAfter } = values;
 
-    if (type === added) {
+  switch (type) {
+    case added:
       return { [addedKey]: valueAfter };
-    }
-    if (type === removed) {
+    case removed:
       return { [removedKey]: valueBefore };
-    }
-    if (type === updated) {
+    case updated:
       return {
         [removedKey]: valueBefore,
         [addedKey]: valueAfter,
       };
+    case nested: {
+      const { children } = node;
+      const result = children.reduce((acc, child) => {
+        const value = convertDiffToObject(child);
+        return { ...acc, ...value };
+      }, {});
+      return { [unchangedKey]: result };
     }
-    return { [unchangedKey]: valueBefore };
+    case unchanged:
+      return { [unchangedKey]: valueBefore };
+    default:
+      throw new Error(`non supported node type: ${type}`);
   }
-
-  const { children } = node;
-  const result = children.reduce((acc, child) => {
-    const value = convertDiffToObject(child);
-    return { ...acc, ...value };
-  }, {});
-  return { [unchangedKey]: result };
 };
 
 export default (diffTree) => {
