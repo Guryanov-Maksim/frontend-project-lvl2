@@ -22,13 +22,19 @@ beforeAll(() => {
   const pathToYmlBefore = getFixturePath('before.yml');
   const pathToYmlAfter = getFixturePath('after.yml');
 
+  // eslint-disable-next-line fp/no-mutation
   results.default = defaultResult;
+  // eslint-disable-next-line fp/no-mutation
   results.plain = plainResult;
+  // eslint-disable-next-line fp/no-mutation
   results.json = jsonResult;
-
+  // eslint-disable-next-line fp/no-mutation
   paths.jsonBefore = pathToJsonBefore;
+  // eslint-disable-next-line fp/no-mutation
   paths.jsonAfter = pathToJsonAfter;
+  // eslint-disable-next-line fp/no-mutation
   paths.ymlBefore = pathToYmlBefore;
+  // eslint-disable-next-line fp/no-mutation
   paths.ymlAfter = pathToYmlAfter;
 });
 
