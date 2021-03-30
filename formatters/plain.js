@@ -38,8 +38,10 @@ const convertDiffToPlain = (node, pathToKey) => {
       return `Property '${fullPath}' was updated. From ${valueBefore} to ${valueAfter}`;
     case nested: {
       const { children } = node;
-      const result = children.map((child) => convertDiffToPlain(child, `${fullPath}.`));
-      return result.filter((item) => item !== '').join('\n');
+      return children
+        .map((child) => convertDiffToPlain(child, `${fullPath}.`))
+        .filter((plainChild) => plainChild !== '')
+        .join('\n');
     }
     case unchanged:
       return '';
