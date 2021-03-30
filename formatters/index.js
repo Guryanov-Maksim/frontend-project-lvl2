@@ -5,7 +5,7 @@ import makeJson from './json.js';
 export default (obj, formatterName = 'stylish') => {
   switch (formatterName) {
     case 'json':
-      return JSON.stringify(makeJson(obj), null, '  ');
+      return makeJson(obj);
     case 'plain':
       return plain(obj);
     case 'stylish':
