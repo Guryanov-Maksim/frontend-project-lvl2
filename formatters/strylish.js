@@ -1,69 +1,94 @@
-import _ from 'lodash';
-import isObject from '../lib/isObject.js';
+import isObject from '../src/isObject.js';
+import types from '../src/typesEnum.js';
 
-const stylizeValue = (value, undent, depth) => {
-  if (isObject(value)) {
-    const keys = Object.keys(value);
-    const entryUndent = undent.repeat(depth);
-    const endUndent = undent.repeat(depth - 1);
-    const strylizedEntries = keys.map((key) => {
-      const stylizedValue = stylizeValue(value[key], undent, depth + 1);
-      return `${entryUndent}${key}: ${stylizedValue}`;
-    });
-    return `{\n${strylizedEntries.join('\n')}\n${endUndent}}`;
-  }
-  return value;
+const {
+  added,
+  removed,
+  updated,
+  nested,
+  unchanged,
+} = types;
+
+const signsMap = {
+  add: '+',
+  remove: '-',
+  update: ' ',
+  nest: ' ',
 };
 
-const getStyliziedValue = (value, undent, depth) => {
-  const { valueBefore, valueAfter } = value;
-  const styliziedValueBefore = stylizeValue(valueBefore, undent, depth);
-  const styliziedValueAfter = stylizeValue(valueAfter, undent, depth);
-  return { styliziedValueBefore, styliziedValueAfter };
-};
+const wrapInCurlyBrackets = (value, finiteUndent = '') => `{\n${value}\n${finiteUndent}}`;
 
-const makeDiffItem = (item, undent, depth) => {
-  const addSign = '+';
-  const removeSign = '-';
-  const unchangeSign = ' ';
-
-  const { key, type, value } = item;
-  const styliziedValue = getStyliziedValue(value, undent, depth + 1);
-  const { styliziedValueBefore, styliziedValueAfter } = styliziedValue;
-  if (type === 'added') {
-    const addedKey = `${addSign} ${key}`;
-    return [`${addedKey}: ${styliziedValueAfter}`];
-  }
-  if (type === 'removed') {
-    const removedKey = `${removeSign} ${key}`;
-    return [`${removedKey}: ${styliziedValueBefore}`];
-  }
-  if (type === 'updated') {
-    const addedKey = `${addSign} ${key}`;
-    const removedKey = `${removeSign} ${key}`;
-    return [`${removedKey}: ${styliziedValueBefore}`, `${addedKey}: ${styliziedValueAfter}`];
-  }
-  const unchangedKey = `${unchangeSign} ${key}`;
-  return [`${unchangedKey}: ${styliziedValueBefore}`];
-};
-
-export default (tree) => {
-  const defaultUndent = '    ';
-
-  const inner = (node, depth) => {
-    const propertyUndent = defaultUndent.repeat(depth);
-    const cutPropertyUndend = propertyUndent.slice(0, propertyUndent.length - 2);
-    if (!_.has(node, 'children')) {
-      const entry = makeDiffItem(node, defaultUndent, depth);
-      return `${cutPropertyUndend}${entry.join(`\n${cutPropertyUndend}`)}`;
-    }
-    const { key, children } = node;
-    const result = children.map((child) => {
-      const item = inner(child, depth + 1);
-      return item;
-    });
-    return `${propertyUndent}${key}: {\n${result.join('\n')}\n${propertyUndent}}`;
+const getUndents = (depth) => {
+  const space = ' ';
+  const spaceCount = 4;
+  const propertySpaceCount = 2;
+  const unitary = space.repeat(spaceCount);
+  const truncated = space.repeat(propertySpaceCount);
+  const onCurrentDepth = unitary.repeat(depth);
+  const onPrevDepth = space.repeat(spaceCount * (depth - 1));
+  const forProperty = onPrevDepth.concat(truncated);
+  return {
+    forProperty,
+    onPrevDepth,
+    onCurrentDepth,
   };
-  const result = tree.map((node) => inner(node, 1));
-  return `{\n${result.join('\n')}\n}`;
+};
+
+const stylizeValue = (value, depth) => {
+  const { onCurrentDepth, onPrevDepth } = getUndents(depth);
+  if (!isObject(value)) {
+    return value;
+  }
+  const keys = Object.keys(value);
+  const strylizedEntries = keys
+    .map((key) => {
+      const stylizedValue = stylizeValue(value[key], depth + 1);
+      return `${onCurrentDepth}${key}: ${stylizedValue}`;
+    })
+    .join('\n');
+  return wrapInCurlyBrackets(strylizedEntries, onPrevDepth);
+};
+
+const stylizeNode = (node, depth) => {
+  const {
+    key,
+    type,
+    values = {},
+    children,
+  } = node;
+  const { forProperty, onCurrentDepth } = getUndents(depth);
+  const valueBefore = stylizeValue(values.valueBefore, depth + 1);
+  const valueAfter = stylizeValue(values.valueAfter, depth + 1);
+  const addedKey = `${signsMap.add} ${key}`;
+  const removedKey = `${signsMap.remove} ${key}`;
+  const unchangedKey = `${signsMap.update} ${key}`;
+  const nestedKey = `${signsMap.nest} ${key}`;
+
+  switch (type) {
+    case added:
+      return `${forProperty}${addedKey}: ${valueAfter}`;
+    case removed:
+      return `${forProperty}${removedKey}: ${valueBefore}`;
+    case updated:
+      return `${forProperty}${removedKey}: ${valueBefore}\n${forProperty}${addedKey}: ${valueAfter}`;
+    case nested: {
+      const result = children
+        .map((child) => stylizeNode(child, depth + 1))
+        .join('\n');
+      const wrappedResult = wrapInCurlyBrackets(result, onCurrentDepth);
+      return `${forProperty}${nestedKey}: ${wrappedResult}`;
+    }
+    case unchanged:
+      return `${forProperty}${unchangedKey}: ${valueBefore}`;
+    default:
+      throw new Error(`non supported node type: ${type}`);
+  }
+};
+
+export default (diffTree) => {
+  const result = diffTree
+    .map((node) => stylizeNode(node, 1))
+    .join('\n');
+  const wrappedResult = wrapInCurlyBrackets(result);
+  return wrappedResult;
 };
