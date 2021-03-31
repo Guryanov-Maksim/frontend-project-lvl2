@@ -30,10 +30,9 @@ const convertDiffToObject = (node) => {
       };
     case nested: {
       const { children } = node;
-      const result = children.reduce((acc, child) => {
-        const value = convertDiffToObject(child);
-        return { ...acc, ...value };
-      }, {});
+      const result = children.reduce((acc, child) => (
+        { ...acc, ...convertDiffToObject(child) }
+      ), {});
       return { [unchangedKey]: result };
     }
     case unchanged:
