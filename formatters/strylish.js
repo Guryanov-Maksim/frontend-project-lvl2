@@ -40,13 +40,13 @@ const stylizeValue = (value, depth) => {
     return value;
   }
   const keys = Object.keys(value);
-  const strylizedEntries = keys
+  const strylizedProperties = keys
     .map((key) => {
       const stylizedValue = stylizeValue(value[key], depth + 1);
       return `${onCurrentDepth}${key}: ${stylizedValue}`;
     })
     .join('\n');
-  return wrapInCurlyBrackets(strylizedEntries, onPrevDepth);
+  return wrapInCurlyBrackets(strylizedProperties, onPrevDepth);
 };
 
 const stylizeNode = (node, depth) => {
