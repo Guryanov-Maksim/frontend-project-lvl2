@@ -20,13 +20,34 @@ The following file types are supported:
 ## Run tests
         make test
 
-## Creating executable files
+## Usage
 
-If you want to use the lib as a cli script you will need to run `npm link` command in the root directory of the library after installation (see [npm link](https://docs.npmjs.com/cli/v7/commands/npm-link)). After that you will be able to use the lib in the command line as shown below:
+### Use as an executable file
+
+If you want to use the lib as a cli script you will need to run `npm link` command in the root directory of the library after installation (see [npm link](https://docs.npmjs.com/cli/v7/commands/npm-link)). After that you will be able to use the lib in the command line as shown below (more examples are in the asciicast below):
         
         gendiff [options] pathToFile1 pathToFile2
 
-## Use
+### Use as a library
+
+In order to use gendiff as a library you should take only two simple steps:
+1. Install the library in the dependencies of your package:
+
+        npm install https://github.com/Guryanov-Maksim/frontend-project-lvl2.git
+
+2. Import gendiff into your js file:
+
+        //  yourJsFile.js
+
+        import gendiff from '@hexlet/code';
+
+        const plainDiff = gendiff('pathToFile1', 'pathToFile2', 'plain');
+
+By the way, it isn't necessary to specify a format: 
+
+        const stylishDiff = gendiff('pathToFile1', 'pathToFile2');
+
+### Examples of use
 
 The asciicasts listed below show the use of the library as a cli script
 
