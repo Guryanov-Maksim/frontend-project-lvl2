@@ -22,7 +22,9 @@ The following file types are supported:
 
 ## Creating executable files
 
-If you want to use the lib as a cli script you will need to run `npm link` command in the root directory of the library after installation (see [npm link](https://docs.npmjs.com/cli/v7/commands/npm-link))
+If you want to use the lib as a cli script you will need to run `npm link` command in the root directory of the library after installation (see [npm link](https://docs.npmjs.com/cli/v7/commands/npm-link)). After that you will be able to use the lib in the command line as shown below:
+        
+        gendiff [options] pathToFile1 pathToFile2
 
 ## Use
 
