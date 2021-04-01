@@ -47,8 +47,8 @@ const convertDiffToObject = (node) => {
 };
 
 export default (diffTree) => {
-  const json = JSON.stringify(diffTree.reduce((acc, node) => (
+  const jsonString = JSON.stringify(diffTree.reduce((acc, node) => (
     { ...acc, ...convertDiffToObject(node) }
   ), {}));
-  return json;
+  return JSON.parse(jsonString);
 };
