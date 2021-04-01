@@ -2,8 +2,8 @@ import plain from './plain.js';
 import stylish from './strylish.js';
 import makeJson from './json.js';
 
-export default (obj, formatterName = 'stylish') => {
-  switch (formatterName) {
+export default (obj, format = 'stylish') => {
+  switch (format) {
     case 'json':
       return makeJson(obj);
     case 'plain':
@@ -11,6 +11,6 @@ export default (obj, formatterName = 'stylish') => {
     case 'stylish':
       return stylish(obj);
     default:
-      throw new Error('non supported format');
+      throw new Error(`non supported format: ${format}`);
   }
 };
