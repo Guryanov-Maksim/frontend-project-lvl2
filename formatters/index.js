@@ -1,15 +1,15 @@
 import plain from './plain.js';
 import stylish from './strylish.js';
-import makeJson from './json.js';
+import makeJsonString from './json.js';
 
-export default (obj, format = 'stylish') => {
+export default (diffTree, format = 'stylish') => {
   switch (format) {
     case 'json':
-      return makeJson(obj);
+      return makeJsonString(diffTree);
     case 'plain':
-      return plain(obj);
+      return plain(diffTree);
     case 'stylish':
-      return stylish(obj);
+      return stylish(diffTree);
     default:
       throw new Error(`non supported format: ${format}`);
   }
