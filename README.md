@@ -6,17 +6,23 @@
 
 # gendiff
 
-This library let you compare two files and get the difference between them. 
+This library let you compare two configuration files and get the difference between them in different formats. 
 
 The following file types are supported:
 - json
 - yml
 
-## Setup
+## Installation
+        git clone https://github.com/Guryanov-Maksim/frontend-project-lvl2.git gendiff
+        cd gendiff
         make install
 
 ## Run tests
         make test
+
+## Creating executable files
+
+If you want to use the lib as a cli script you will need to run `npm link` command in the root directory of the library after installation (see [npm link](https://docs.npmjs.com/cli/v7/commands/npm-link))
 
 ## Use
 
