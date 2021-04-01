@@ -27,7 +27,7 @@ beforeAll(() => {
   // eslint-disable-next-line fp/no-mutation
   results.plain = plainResult;
   // eslint-disable-next-line fp/no-mutation
-  results.json = jsonResult;
+  results.json = JSON.parse(jsonResult);
   // eslint-disable-next-line fp/no-mutation
   paths.jsonBefore = pathToJsonBefore;
   // eslint-disable-next-line fp/no-mutation
