@@ -1,7 +1,7 @@
 {
   "name": "@hexlet/code",
   "version": "1.0.0",
-  "description": "[![Actions Status](https://github.com/Guryanov-Maksim/frontend-project-lvl2/workflows/hexlet-check/badge.svg)](https://github.com/Guryanov-Maksim/frontend-project-lvl2/actions)",
+  "description": "This library let you compare two configuration files and get the difference between them in different formats",
   "main": "lib/index.js",
   "type": "module",
   "bin": {
