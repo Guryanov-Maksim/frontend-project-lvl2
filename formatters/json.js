@@ -12,7 +12,12 @@ const addSign = '+';
 const removeSign = '-';
 
 const convertDiffToObject = (node) => {
-  const { key, type, values = {} } = node;
+  const {
+    key,
+    type,
+    values = {},
+    children,
+  } = node;
   const addedKey = `${addSign} ${key}`;
   const removedKey = `${removeSign} ${key}`;
   const unchangedKey = `${key}`;
@@ -29,7 +34,6 @@ const convertDiffToObject = (node) => {
         [addedKey]: valueAfter,
       };
     case nested: {
-      const { children } = node;
       const result = children.reduce((acc, child) => (
         { ...acc, ...convertDiffToObject(child) }
       ), {});
