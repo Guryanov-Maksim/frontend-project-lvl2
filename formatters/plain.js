@@ -19,16 +19,11 @@ const stringify = (value) => {
   return `${value}`;
 };
 
-const getStringifiedValues = (values = {}) => {
+const convertDiffToPlain = (node, pathToKey) => {
+  const { key, type, values = {} } = node;
+  const fullPath = pathToKey.concat(`${key}`);
   const valueBefore = stringify(values.valueBefore);
   const valueAfter = stringify(values.valueAfter);
-  return { valueBefore, valueAfter };
-};
-
-const convertDiffToPlain = (node, pathToKey) => {
-  const { key, type, values } = node;
-  const fullPath = pathToKey.concat(`${key}`);
-  const { valueBefore, valueAfter } = getStringifiedValues(values);
   switch (type) {
     case added:
       return `Property '${fullPath}' was added with value: ${valueAfter}`;
