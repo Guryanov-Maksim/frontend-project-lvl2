@@ -38,30 +38,6 @@ beforeAll(() => {
   paths.ymlAfter = pathToYmlAfter;
 });
 
-/*
-
-Твое замечание: "По самим тестам, получается много похожего кода.
-Здесь приходит на помощь jest each, который может обрабатывать сразу несколько параметров."
-
-Мой вопрос: правильно ли я исправил, применив test.each? На вид будто страшнее стало, чем было.
-
-=======================
-Твое замечание: "Так же стоит проверить не переданный форматер."
-
-Мои вопросы:
-1. При сравнении файлов json и yml в первом test.each функция genDiff() вызывается без форматтера.
-  Этой проверки не досточно? Или нужен явный вызов genDiff() без форматтера?
-2. Я хотел сделать вызов genDiff() без форматтера во втором test.each
-  (вместо форматтера задать пустую строку), но тогда название этого теста получается
-  урезанным: "output the difference in various formats ( format)". Что-то не придумаю,
-  как мне поступить.
-
-===============
-  Твое замечание: "И, как вариант, валидность json через JSON.parse."
-
-  Мой вопрос: поясни, пожалуйста, что ты имел ввиду?
-*/
-
 test.each`
   getBefore                 | getAfter                 | getExpected              | type
   ${() => paths.jsonBefore} | ${() => paths.jsonAfter} | ${() => results.default} | ${'json'}
@@ -89,35 +65,3 @@ test.each`
 test('non supported formatter', () => {
   expect(() => getDifference(paths.jsonBefore, paths.jsonAfter, 'wrong')).toThrow();
 });
-
-// test('compare two JSON-files', () => {
-//   const beforePath = getFixturePath('before.json');
-//   const afterPath = getFixturePath('after.json');
-//   const result = getDifference(beforePath, afterPath);
-//   const expectedResult = readFile('result.txt');
-//   expect(result).toEqual(expectedResult);
-// });
-
-// test('compare two YML-files', () => {
-//   const beforePath = getFixturePath('before.yml');
-//   const afterPath = getFixturePath('after.yml');
-//   const result = getDifference(beforePath, afterPath);
-//   const expectedResult = readFile('result.txt');
-//   expect(result).toEqual(expectedResult);
-// });
-
-// test('output plane result', () => {
-//   const beforePath = getFixturePath('before.json');
-//   const afterPath = getFixturePath('after.json');
-//   const result = getDifference(beforePath, afterPath, 'plain');
-//   const expectedPlainResult = readFile('plainResult.txt');
-//   expect(result).toEqual(expectedPlainResult);
-// });
-
-// test('JSON output', () => {
-//   const beforePath = getFixturePath('before.json');
-//   const afterPath = getFixturePath('after.json');
-//   const result = getDifference(beforePath, afterPath, 'json');
-//   const expectedJsonResult = readFile('jsonResult.json');
-//   expect(result).toEqual(expectedJsonResult);
-// });
