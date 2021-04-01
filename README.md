@@ -64,4 +64,4 @@ gendiff output in plain format
 [![asciicast](https://asciinema.org/a/yh4u4ITmmzuduaigmauLXkx3o.svg)](https://asciinema.org/a/yh4u4ITmmzuduaigmauLXkx3o)
 
 gendiff output in json format 
-[![asciicast](https://asciinema.org/a/wgvR4ZLy12LmLxrFB1Iocuw54.svg)](https://asciinema.org/a/wgvR4ZLy12LmLxrFB1Iocuw54)
+[![asciicast](https://asciinema.org/a/m2ak08X1daOxndFjV4KZ5sPWh.svg)](https://asciinema.org/a/m2ak08X1daOxndFjV4KZ5sPWh)
