@@ -1,5 +1,5 @@
 import isObject from '../src/isObject.js';
-import types from '../src/typesEnum.js';
+import types from '../src/types.js';
 
 const {
   added,
