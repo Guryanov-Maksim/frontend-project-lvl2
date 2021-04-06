@@ -10,24 +10,25 @@ const signsMap = {
 
 const wrapInCurlyBrackets = (value, finiteUndent = '') => `{\n${value}\n${finiteUndent}}`;
 
-const getUndents = (depth) => {
-  const space = ' ';
-  const spaceCount = 4;
-  const propertySpaceCount = 2;
-  const unitary = space.repeat(spaceCount);
-  const truncated = space.repeat(propertySpaceCount);
-  const onCurrentDepth = unitary.repeat(depth);
-  const onPrevDepth = space.repeat(spaceCount * (depth - 1));
-  const forProperty = onPrevDepth.concat(truncated);
+const space = ' ';
+const spacesCount = 4;
+const propertySpacesCount = 2;
+const prefix = space.repeat(spacesCount);
+const propertyPrefix = space.repeat(propertySpacesCount);
+
+const getIndents = (depth) => {
+  const сurrentIndent = prefix.repeat(depth);
+  const prevIndent = prefix.repeat(depth - 1);
+  const propertyIndent = prevIndent.concat(propertyPrefix);
   return {
-    forProperty,
-    onPrevDepth,
-    onCurrentDepth,
+    propertyIndent,
+    prevIndent,
+    сurrentIndent,
   };
 };
 
 const stylizeValue = (value, depth) => {
-  const { onCurrentDepth, onPrevDepth } = getUndents(depth);
+  const { сurrentIndent, prevIndent } = getIndents(depth);
   if (!_.isPlainObject(value)) {
     return value;
   }
@@ -35,10 +36,10 @@ const stylizeValue = (value, depth) => {
   const strylizedProperties = keys
     .map((key) => {
       const stylizedValue = stylizeValue(value[key], depth + 1);
-      return `${onCurrentDepth}${key}: ${stylizedValue}`;
+      return `${сurrentIndent}${key}: ${stylizedValue}`;
     })
     .join('\n');
-  return wrapInCurlyBrackets(strylizedProperties, onPrevDepth);
+  return wrapInCurlyBrackets(strylizedProperties, prevIndent);
 };
 
 const stylizeNode = (node, depth) => {
@@ -48,7 +49,7 @@ const stylizeNode = (node, depth) => {
     values = {},
     children,
   } = node;
-  const { forProperty, onCurrentDepth } = getUndents(depth);
+  const { propertyIndent, сurrentIndent } = getIndents(depth);
   const valueBefore = stylizeValue(values.valueBefore, depth + 1);
   const valueAfter = stylizeValue(values.valueAfter, depth + 1);
   const addedKey = `${signsMap.add} ${key}`;
@@ -58,20 +59,20 @@ const stylizeNode = (node, depth) => {
 
   switch (type) {
     case types.added:
-      return `${forProperty}${addedKey}: ${valueAfter}`;
+      return `${propertyIndent}${addedKey}: ${valueAfter}`;
     case types.removed:
-      return `${forProperty}${removedKey}: ${valueBefore}`;
+      return `${propertyIndent}${removedKey}: ${valueBefore}`;
     case types.updated:
-      return `${forProperty}${removedKey}: ${valueBefore}\n${forProperty}${addedKey}: ${valueAfter}`;
+      return `${propertyIndent}${removedKey}: ${valueBefore}\n${propertyIndent}${addedKey}: ${valueAfter}`;
     case types.nested: {
       const result = children
         .map((child) => stylizeNode(child, depth + 1))
         .join('\n');
-      const wrappedResult = wrapInCurlyBrackets(result, onCurrentDepth);
-      return `${forProperty}${nestedKey}: ${wrappedResult}`;
+      const wrappedResult = wrapInCurlyBrackets(result, сurrentIndent);
+      return `${propertyIndent}${nestedKey}: ${wrappedResult}`;
     }
     case types.unchanged:
-      return `${forProperty}${unchangedKey}: ${valueBefore}`;
+      return `${propertyIndent}${unchangedKey}: ${valueBefore}`;
     default:
       throw new Error(`non supported node type: ${type}`);
   }
