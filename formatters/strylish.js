@@ -1,4 +1,4 @@
-import isObject from '../src/isObject.js';
+import _ from 'lodash';
 import types from '../src/types.js';
 
 const {
@@ -36,7 +36,7 @@ const getUndents = (depth) => {
 
 const stylizeValue = (value, depth) => {
   const { onCurrentDepth, onPrevDepth } = getUndents(depth);
-  if (!isObject(value)) {
+  if (!_.isPlainObject(value)) {
     return value;
   }
   const keys = Object.keys(value);

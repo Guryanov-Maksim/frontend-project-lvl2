@@ -1,4 +1,4 @@
-import isObject from '../src/isObject.js';
+import _ from 'lodash';
 import types from '../src/types.js';
 
 const {
@@ -10,7 +10,7 @@ const {
 } = types;
 
 const stringify = (value) => {
-  if (isObject(value)) {
+  if (_.isPlainObject(value)) {
     return '[complex value]';
   }
   if (typeof value === 'string') {
