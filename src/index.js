@@ -1,8 +1,8 @@
 import path from 'path';
 import fs from 'fs';
-import parse from '../src/parser.js';
-import format from '../src/formatters/index.js';
-import makeDiffTree from '../src/tree.js';
+import parse from './parser.js';
+import format from './formatters/index.js';
+import makeDiffTree from './tree.js';
 
 const readFile = (pathToFile) => {
   const fullPath = path.resolve(process.cwd(), pathToFile);
