@@ -3,7 +3,11 @@ import types from '../src/types.js';
 const addSign = '+';
 const removeSign = '-';
 
-const convertDiffToObject = (node) => {
+const convertTreeToObject = (tree, convertNode) => tree.reduce((acc, node) => (
+  { ...acc, ...convertNode(node) }
+), {});
+
+const convertNodeToObject = (node) => {
   const {
     key,
     type,
@@ -26,10 +30,8 @@ const convertDiffToObject = (node) => {
         [addedKey]: valueAfter,
       };
     case types.nested: {
-      const result = children.reduce((acc, child) => (
-        { ...acc, ...convertDiffToObject(child) }
-      ), {});
-      return { [unchangedKey]: result };
+      const convertedChildren = convertTreeToObject(children, convertNodeToObject);
+      return { [unchangedKey]: convertedChildren };
     }
     case types.unchanged:
       return { [unchangedKey]: valueBefore };
@@ -38,6 +40,4 @@ const convertDiffToObject = (node) => {
   }
 };
 
-export default (diffTree) => diffTree.reduce((acc, node) => (
-  { ...acc, ...convertDiffToObject(node) }
-), {});
+export default (diffTree) => convertTreeToObject(diffTree, convertNodeToObject);
