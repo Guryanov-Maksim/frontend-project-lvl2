@@ -8,13 +8,13 @@ const signsMap = {
   nest: ' ',
 };
 
-const wrapInCurlyBrackets = (value, finiteUndent = '') => `{\n${value}\n${finiteUndent}}`;
-
 const space = ' ';
 const spacesCount = 4;
 const propertySpacesCount = 2;
 const prefix = space.repeat(spacesCount);
 const propertyPrefix = space.repeat(propertySpacesCount);
+
+const wrapInCurlyBrackets = (value, finiteUndent = '') => `{\n${value}\n${finiteUndent}}`;
 
 const getIndents = (depth) => {
   const сurrentIndent = prefix.repeat(depth);
