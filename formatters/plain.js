@@ -1,14 +1,6 @@
 import _ from 'lodash';
 import types from '../src/types.js';
 
-const {
-  added,
-  removed,
-  nested,
-  updated,
-  unchanged,
-} = types;
-
 const stringify = (value) => {
   if (_.isPlainObject(value)) {
     return '[complex value]';
@@ -30,25 +22,23 @@ const convertDiffToPlain = (node, pathToKey) => {
   const valueBefore = stringify(values.valueBefore);
   const valueAfter = stringify(values.valueAfter);
   switch (type) {
-    case added:
+    case types.added:
       return `Property '${fullPath}' was added with value: ${valueAfter}`;
-    case removed:
+    case types.removed:
       return `Property '${fullPath}' was removed`;
-    case updated:
+    case types.updated:
       return `Property '${fullPath}' was updated. From ${valueBefore} to ${valueAfter}`;
-    case nested: {
-      return children
-        .map((child) => convertDiffToPlain(child, `${fullPath}.`))
-        .filter((plainChild) => plainChild !== '')
-        .join('\n');
+    case types.nested: {
+      return children.flatMap((child) => convertDiffToPlain(child, `${fullPath}.`));
     }
-    case unchanged:
+    case types.unchanged:
       return '';
     default:
       throw new Error(`non supported node type: ${type}`);
   }
 };
 
-export default (diffTree) => (
-  diffTree.map((node) => convertDiffToPlain(node, '')).join('\n')
-);
+export default (diffTree) => diffTree
+  .flatMap((node) => convertDiffToPlain(node, ''))
+  .filter((plainDiff) => plainDiff !== '')
+  .join('\n');
