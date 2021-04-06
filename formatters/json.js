@@ -1,13 +1,5 @@
 import types from '../src/types.js';
 
-const {
-  added,
-  removed,
-  updated,
-  nested,
-  unchanged,
-} = types;
-
 const addSign = '+';
 const removeSign = '-';
 
@@ -24,22 +16,22 @@ const convertDiffToObject = (node) => {
   const { valueBefore, valueAfter } = values;
 
   switch (type) {
-    case added:
+    case types.added:
       return { [addedKey]: valueAfter };
-    case removed:
+    case types.removed:
       return { [removedKey]: valueBefore };
-    case updated:
+    case types.updated:
       return {
         [removedKey]: valueBefore,
         [addedKey]: valueAfter,
       };
-    case nested: {
+    case types.nested: {
       const result = children.reduce((acc, child) => (
         { ...acc, ...convertDiffToObject(child) }
       ), {});
       return { [unchangedKey]: result };
     }
-    case unchanged:
+    case types.unchanged:
       return { [unchangedKey]: valueBefore };
     default:
       throw new Error(`non supported node type: ${type}`);

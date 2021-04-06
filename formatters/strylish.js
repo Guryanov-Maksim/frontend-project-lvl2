@@ -1,14 +1,6 @@
 import _ from 'lodash';
 import types from '../src/types.js';
 
-const {
-  added,
-  removed,
-  updated,
-  nested,
-  unchanged,
-} = types;
-
 const signsMap = {
   add: '+',
   remove: '-',
@@ -65,20 +57,20 @@ const stylizeNode = (node, depth) => {
   const nestedKey = `${signsMap.nest} ${key}`;
 
   switch (type) {
-    case added:
+    case types.added:
       return `${forProperty}${addedKey}: ${valueAfter}`;
-    case removed:
+    case types.removed:
       return `${forProperty}${removedKey}: ${valueBefore}`;
-    case updated:
+    case types.updated:
       return `${forProperty}${removedKey}: ${valueBefore}\n${forProperty}${addedKey}: ${valueAfter}`;
-    case nested: {
+    case types.nested: {
       const result = children
         .map((child) => stylizeNode(child, depth + 1))
         .join('\n');
       const wrappedResult = wrapInCurlyBrackets(result, onCurrentDepth);
       return `${forProperty}${nestedKey}: ${wrappedResult}`;
     }
-    case unchanged:
+    case types.unchanged:
       return `${forProperty}${unchangedKey}: ${valueBefore}`;
     default:
       throw new Error(`non supported node type: ${type}`);
