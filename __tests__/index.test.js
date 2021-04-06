@@ -4,8 +4,7 @@ import path from 'path';
 import fs from 'fs';
 import getDifference from '../lib/index.js';
 
-const results = {};
-const paths = {};
+const expectedResults = {};
 
 const { dirname } = path;
 const __filename = fileURLToPath(import.meta.url);
@@ -17,51 +16,37 @@ beforeAll(() => {
   const defaultResult = readFile('result.txt');
   const plainResult = readFile('plainResult.txt');
   const jsonResult = readFile('jsonResult.json');
-  const pathToJsonBefore = getFixturePath('before.json');
-  const pathToJsonAfter = getFixturePath('after.json');
-  const pathToYmlBefore = getFixturePath('before.yml');
-  const pathToYmlAfter = getFixturePath('after.yml');
 
-  // eslint-disable-next-line fp/no-mutation
-  results.default = defaultResult;
-  // eslint-disable-next-line fp/no-mutation
-  results.plain = plainResult;
-  // eslint-disable-next-line fp/no-mutation
-  results.json = jsonResult;
-  // eslint-disable-next-line fp/no-mutation
-  paths.jsonBefore = pathToJsonBefore;
-  // eslint-disable-next-line fp/no-mutation
-  paths.jsonAfter = pathToJsonAfter;
-  // eslint-disable-next-line fp/no-mutation
-  paths.ymlBefore = pathToYmlBefore;
-  // eslint-disable-next-line fp/no-mutation
-  paths.ymlAfter = pathToYmlAfter;
+  /* eslint-disable no-alert, fp/no-mutation */
+  expectedResults.stylish = defaultResult;
+  expectedResults.plain = plainResult;
+  expectedResults.json = jsonResult;
+  /* eslint-enable no-alert, fp/no-mutation */
 });
 
-test.each`
-  getBefore                 | getAfter                 | getExpected              | type
-  ${() => paths.jsonBefore} | ${() => paths.jsonAfter} | ${() => results.default} | ${'json'}
-  ${() => paths.ymlBefore}  | ${() => paths.ymlAfter}  | ${() => results.default} | ${'yml'}
-`('compare two $type files', ({ getBefore, getAfter, getExpected }) => {
-  const result = getDifference(getBefore(), getAfter());
-  expect(result).toEqual(getExpected());
+test.each([
+  'json',
+  'yml',
+])('compare two %s files', (extention) => {
+  const pathToBefore = getFixturePath(`before.${extention}`);
+  const pathToAfter = getFixturePath(`after.${extention}`);
+  const result = getDifference(pathToBefore, pathToAfter);
+  expect(result).toEqual(expectedResults.stylish);
 });
 
-test.each`
-  getBefore                 | getAfter                 | getExpected              | format
-  ${() => paths.jsonBefore} | ${() => paths.jsonAfter} | ${() => results.default} | ${'stylish'}
-  ${() => paths.jsonBefore} | ${() => paths.jsonAfter} | ${() => results.plain}   | ${'plain'}
-  ${() => paths.jsonBefore} | ${() => paths.jsonAfter} | ${() => results.json}    | ${'json'}
-`('output the difference in various formats ($format format)', ({
-  getBefore,
-  getAfter,
-  getExpected,
-  format,
-}) => {
-  const result = getDifference(getBefore(), getAfter(), format);
-  expect(result).toEqual(getExpected());
+test.each([
+  'stylish',
+  'plain',
+  'json',
+])('output the difference in various formats (%s format)', (format) => {
+  const pathToBefore = getFixturePath('before.json');
+  const pathToAfter = getFixturePath('after.json');
+  const result = getDifference(pathToBefore, pathToAfter, format);
+  expect(result).toEqual(expectedResults[format]);
 });
 
 test('non supported formatter', () => {
-  expect(() => getDifference(paths.jsonBefore, paths.jsonAfter, 'wrong')).toThrow();
+  const pathToBefore = getFixturePath('before.json');
+  const pathToAfter = getFixturePath('after.json');
+  expect(() => getDifference(pathToBefore, pathToAfter, 'wrong')).toThrow();
 });
