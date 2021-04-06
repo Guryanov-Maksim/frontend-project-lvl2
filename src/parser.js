@@ -7,6 +7,6 @@ export default (fileExtention, data) => {
     case '.json':
       return JSON.parse(data);
     default:
-      throw new Error(`non supported file: ${fileExtention}`);
+      throw new Error(`non supported data format: ${fileExtention}`);
   }
 };
