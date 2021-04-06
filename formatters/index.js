@@ -1,11 +1,11 @@
 import plain from './plain.js';
 import stylish from './strylish.js';
-import makeJsonString from './json.js';
+import makeObjFromDiff from './json.js';
 
 export default (diffTree, format = 'stylish') => {
   switch (format) {
     case 'json':
-      return makeJsonString(diffTree);
+      return JSON.stringify(makeObjFromDiff(diffTree));
     case 'plain':
       return plain(diffTree);
     case 'stylish':
