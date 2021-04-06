@@ -1,4 +1,4 @@
-import types from '../src/types.js';
+import types from '../types.js';
 
 const addSign = '+';
 const removeSign = '-';

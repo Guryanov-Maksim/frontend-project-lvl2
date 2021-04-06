@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import types from '../src/types.js';
+import types from '../types.js';
 
 const signsMap = {
   add: '+',
