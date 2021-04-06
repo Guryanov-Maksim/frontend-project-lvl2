@@ -2,7 +2,7 @@ import { test, expect, beforeAll } from '@jest/globals';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import fs from 'fs';
-import getDifference from '../src/index.js';
+import getDifference from '../lib/index.js';
 
 const expectedResults = {};
 

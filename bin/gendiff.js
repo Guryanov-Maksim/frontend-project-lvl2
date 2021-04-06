@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import pkg from 'commander';
-import getDifference from '../src/index.js';
+import getDifference from '../lib/index.js';
 
 const { program } = pkg;
 
