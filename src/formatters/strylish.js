@@ -14,7 +14,7 @@ const propertySpacesCount = 2;
 const prefix = space.repeat(spacesCount);
 const propertyPrefix = space.repeat(propertySpacesCount);
 
-const wrapInCurlyBrackets = (value, finiteUndent = '') => `{\n${value}\n${finiteUndent}}`;
+const wrapInCurlyBrackets = (value, finiteUndent = '') => `{\n${value.join('\n')}\n${finiteUndent}}`;
 
 const getIndents = (depth) => {
   const сurrentIndent = prefix.repeat(depth);
@@ -37,13 +37,11 @@ const stylizeValue = (value, depth) => {
     return value;
   }
   const keys = Object.keys(value);
-  const strylizedProperties = keys
-    .map((key) => {
-      const stylizedValue = stylizeValue(value[key], depth + 1);
-      const keyWithIndent = addIndentToKey(сurrentIndent, key);
-      return `${keyWithIndent}: ${stylizedValue}`;
-    })
-    .join('\n');
+  const strylizedProperties = keys.map((key) => {
+    const stylizedValue = stylizeValue(value[key], depth + 1);
+    const keyWithIndent = addIndentToKey(сurrentIndent, key);
+    return `${keyWithIndent}: ${stylizedValue}`;
+  });
   return wrapInCurlyBrackets(strylizedProperties, prevIndent);
 };
 
@@ -84,9 +82,7 @@ const stylizeNode = (node, depth) => {
     case types.nested: {
       const nestedKey = stylizeKey(signsMap[types.nested], key);
       const nestedKeyWithIndent = addIndentToKey(propertyIndent, nestedKey);
-      const result = children
-        .map((child) => stylizeNode(child, depth + 1))
-        .join('\n');
+      const result = children.map((child) => stylizeNode(child, depth + 1));
       const wrappedResult = wrapInCurlyBrackets(result, сurrentIndent);
       return `${nestedKeyWithIndent}: ${wrappedResult}`;
     }
@@ -102,9 +98,7 @@ const stylizeNode = (node, depth) => {
 };
 
 export default (diffTree) => {
-  const result = diffTree
-    .map((node) => stylizeNode(node, 1))
-    .join('\n');
+  const result = diffTree.map((node) => stylizeNode(node, 1));
   const wrappedResult = wrapInCurlyBrackets(result);
   return wrappedResult;
 };
