@@ -27,9 +27,11 @@ const getIndents = (depth) => {
   };
 };
 
-const stylizeKey = (sign, key) => `${sign} ${key}`;
-
-const addIndentToKey = (indent, key) => `${indent}${key}`;
+const stylizeKey = (indent, key, sign = null) => (
+  sign === null
+    ? `${indent}${key}`
+    : `${indent}${sign} ${key}`
+);
 
 const stylizeValue = (value, depth) => {
   const { сurrentIndent, prevIndent } = getIndents(depth);
@@ -39,8 +41,8 @@ const stylizeValue = (value, depth) => {
   const keys = Object.keys(value);
   const strylizedProperties = keys.map((key) => {
     const stylizedValue = stylizeValue(value[key], depth + 1);
-    const keyWithIndent = addIndentToKey(сurrentIndent, key);
-    return `${keyWithIndent}: ${stylizedValue}`;
+    const stylizedKey = stylizeKey(сurrentIndent, key);
+    return `${stylizedKey}: ${stylizedValue}`;
   });
   return wrapInCurlyBrackets(strylizedProperties, prevIndent);
 };
@@ -56,41 +58,35 @@ const stylizeNode = (node, depth) => {
 
   switch (type) {
     case types.added: {
-      const addedKey = stylizeKey(signsMap[types.added], key);
-      const addedKeyWithIndent = addIndentToKey(propertyIndent, addedKey);
+      const addedKey = stylizeKey(propertyIndent, key, signsMap[types.added]);
       const valueAfter = stylizeValue(values.valueAfter, depth + 1);
-      return `${addedKeyWithIndent}: ${valueAfter}`;
+      return `${addedKey}: ${valueAfter}`;
     }
     case types.removed: {
-      const removedKey = stylizeKey(signsMap[types.removed], key);
-      const removedKeyWithIndent = addIndentToKey(propertyIndent, removedKey);
+      const removedKey = stylizeKey(propertyIndent, key, signsMap[types.removed]);
       const valueBefore = stylizeValue(values.valueBefore, depth + 1);
-      return `${removedKeyWithIndent}: ${valueBefore}`;
+      return `${removedKey}: ${valueBefore}`;
     }
     case types.updated: {
-      const addedKey = stylizeKey(signsMap[types.added], key);
-      const addedKeyWithIndent = addIndentToKey(propertyIndent, addedKey);
-      const removedKey = stylizeKey(signsMap[types.removed], key);
-      const removedKeyWithIndent = addIndentToKey(propertyIndent, removedKey);
+      const addedKey = stylizeKey(propertyIndent, key, signsMap[types.added]);
+      const removedKey = stylizeKey(propertyIndent, key, signsMap[types.removed]);
       const valueBefore = stylizeValue(values.valueBefore, depth + 1);
       const valueAfter = stylizeValue(values.valueAfter, depth + 1);
       return [
-        `${removedKeyWithIndent}: ${valueBefore}`,
-        `${addedKeyWithIndent}: ${valueAfter}`,
+        `${removedKey}: ${valueBefore}`,
+        `${addedKey}: ${valueAfter}`,
       ].join('\n');
     }
     case types.nested: {
-      const nestedKey = stylizeKey(signsMap[types.nested], key);
-      const nestedKeyWithIndent = addIndentToKey(propertyIndent, nestedKey);
+      const nestedKey = stylizeKey(propertyIndent, key, signsMap[types.nested]);
       const result = children.map((child) => stylizeNode(child, depth + 1));
       const wrappedResult = wrapInCurlyBrackets(result, сurrentIndent);
-      return `${nestedKeyWithIndent}: ${wrappedResult}`;
+      return `${nestedKey}: ${wrappedResult}`;
     }
     case types.unchanged: {
-      const unchangedKey = stylizeKey(signsMap[types.unchanged], key);
-      const unchangedKeyWithIndent = addIndentToKey(propertyIndent, unchangedKey);
+      const unchangedKey = stylizeKey(propertyIndent, key, signsMap[types.unchanged]);
       const valueBefore = stylizeValue(values.valueBefore, depth + 1);
-      return `${unchangedKeyWithIndent}: ${valueBefore}`;
+      return `${unchangedKey}: ${valueBefore}`;
     }
     default:
       throw new Error(`non supported node type: ${type}`);
