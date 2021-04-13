@@ -2,10 +2,10 @@ import _ from 'lodash';
 import types from '../types.js';
 
 const signsMap = {
-  add: '+',
-  remove: '-',
-  update: ' ',
-  nest: ' ',
+  [types.added]: '+',
+  [types.removed]: '-',
+  [types.updated]: ' ',
+  [types.nested]: ' ',
 };
 
 const space = ' ';
@@ -52,10 +52,10 @@ const stylizeNode = (node, depth) => {
   const { propertyIndent, сurrentIndent } = getIndents(depth);
   const valueBefore = stylizeValue(values.valueBefore, depth + 1);
   const valueAfter = stylizeValue(values.valueAfter, depth + 1);
-  const addedKey = `${signsMap.add} ${key}`;
-  const removedKey = `${signsMap.remove} ${key}`;
-  const unchangedKey = `${signsMap.update} ${key}`;
-  const nestedKey = `${signsMap.nest} ${key}`;
+  const addedKey = `${signsMap[types.added]} ${key}`;
+  const removedKey = `${signsMap[types.removed]} ${key}`;
+  const unchangedKey = `${signsMap[types.updated]} ${key}`;
+  const nestedKey = `${signsMap[types.nested]} ${key}`;
 
   switch (type) {
     case types.added:
