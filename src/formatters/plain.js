@@ -15,19 +15,22 @@ const convertDiffToPlain = (node, pathToKey) => {
   const {
     key,
     type,
-    values = {},
+    values,
     children,
   } = node;
   const fullPath = pathToKey.concat(`${key}`);
-  const valueBefore = stringify(values.valueBefore);
-  const valueAfter = stringify(values.valueAfter);
   switch (type) {
-    case types.added:
+    case types.added: {
+      const valueAfter = stringify(values.valueAfter);
       return `Property '${fullPath}' was added with value: ${valueAfter}`;
+    }
     case types.removed:
       return `Property '${fullPath}' was removed`;
-    case types.updated:
+    case types.updated: {
+      const valueBefore = stringify(values.valueBefore);
+      const valueAfter = stringify(values.valueAfter);
       return `Property '${fullPath}' was updated. From ${valueBefore} to ${valueAfter}`;
+    }
     case types.nested: {
       return children.flatMap((child) => convertDiffToPlain(child, `${fullPath}.`));
     }
