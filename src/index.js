@@ -10,13 +10,18 @@ const readFile = (pathToFile) => {
   return data;
 };
 
+const getDataFormat = (extention) => extention
+  .split('')
+  .filter((letter) => letter !== '.')
+  .join('');
+
 export default (filePath1, filePath2, formatName) => {
-  const file1Extention = path.extname(filePath1);
-  const file2Extention = path.extname(filePath2);
+  const data1Format = getDataFormat(path.extname(filePath1));
+  const data2Format = getDataFormat(path.extname(filePath1));
   const data1 = readFile(filePath1);
   const data2 = readFile(filePath2);
-  const obj1 = parse(file1Extention, data1);
-  const obj2 = parse(file2Extention, data2);
+  const obj1 = parse(data1Format, data1);
+  const obj2 = parse(data2Format, data2);
   const difference = makeDiffTree(obj1, obj2);
   const formatedDiff = format(difference, formatName);
   return formatedDiff;
