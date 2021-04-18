@@ -1,51 +1,41 @@
 import _ from 'lodash';
 import types from '../types.js';
 
+const space = ' ';
+const spacesCount = 4;
+const prefix = space.repeat(spacesCount);
+
 const signsMap = {
   [types.added]: '+',
   [types.removed]: '-',
   [types.nested]: ' ',
   [types.unchanged]: ' ',
+  [types.updated]: ' ',
 };
 
-const space = ' ';
-const spacesCount = 4;
-const propertySpacesCount = 2;
-const prefix = space.repeat(spacesCount);
-const propertyPrefix = space.repeat(propertySpacesCount);
+const valuesMap = {
+  [types.added]: 'valueAfter',
+  [types.removed]: 'valueBefore',
+  [types.unchanged]: 'valueBefore',
+};
+
+const makePrefix = (depth) => `${prefix.repeat(depth)}`;
 
 const wrapInCurlyBrackets = (value, finiteUndent = '') => `{\n${value.join('\n')}\n${finiteUndent}}`;
 
-const getIndents = (depth) => {
-  const сurrentIndent = prefix.repeat(depth);
-  const prevIndent = prefix.repeat(depth - 1);
-  const propertyIndent = prevIndent.concat(propertyPrefix);
-  return {
-    propertyIndent,
-    prevIndent,
-    сurrentIndent,
-  };
-};
-
-const stylizeKey = (indent, key, sign = null) => (
-  sign === null
-    ? `${indent}${key}`
-    : `${indent}${sign} ${key}`
-);
-
 const stylizeValue = (value, depth) => {
-  const { сurrentIndent, prevIndent } = getIndents(depth);
   if (!_.isPlainObject(value)) {
     return value;
   }
   const keys = Object.keys(value);
   const strylizedProperties = keys.map((key) => {
     const stylizedValue = stylizeValue(value[key], depth + 1);
-    const stylizedKey = stylizeKey(сurrentIndent, key);
-    return `${stylizedKey}: ${stylizedValue}`;
+    return `${makePrefix(depth)}${key}: ${stylizedValue}`;
   });
-  return wrapInCurlyBrackets(strylizedProperties, prevIndent);
+  return wrapInCurlyBrackets(strylizedProperties, makePrefix(depth - 1));
 };
+
+const prepareKey = (indent, key) => (sign) => `${indent}${space} ${sign} ${key}`;
 
 const stylizeProperty = (key, value) => `${key}: ${value}`;
 
@@ -56,44 +46,37 @@ const stylizeNode = (node, depth) => {
     values,
     children,
   } = node;
-  const { propertyIndent, сurrentIndent } = getIndents(depth);
+
+  const addSignToKey = prepareKey(makePrefix(depth - 1), key);
 
   switch (type) {
-    case types.added: {
-      const addedKey = stylizeKey(propertyIndent, key, signsMap[types.added]);
-      const valueAfter = stylizeValue(values.valueAfter, depth + 1);
-      const addedProperty = stylizeProperty(addedKey, valueAfter);
-      return addedProperty;
-    }
-    case types.removed: {
-      const removedKey = stylizeKey(propertyIndent, key, signsMap[types.removed]);
-      const valueBefore = stylizeValue(values.valueBefore, depth + 1);
-      const removedProperty = stylizeProperty(removedKey, valueBefore);
-      return removedProperty;
+    case types.added:
+    case types.removed:
+    case types.unchanged: {
+      return stylizeProperty(
+        addSignToKey(signsMap[type]),
+        stylizeValue(values[valuesMap[type]], depth + 1),
+      );
     }
     case types.updated: {
-      const addedKey = stylizeKey(propertyIndent, key, signsMap[types.added]);
-      const valueAfter = stylizeValue(values.valueAfter, depth + 1);
-      const addedProperty = stylizeProperty(addedKey, valueAfter);
-
-      const removedKey = stylizeKey(propertyIndent, key, signsMap[types.removed]);
-      const valueBefore = stylizeValue(values.valueBefore, depth + 1);
-      const removedProperty = stylizeProperty(removedKey, valueBefore);
+      const addedProperty = stylizeProperty(
+        addSignToKey(signsMap[types.added]),
+        stylizeValue(values.valueAfter, depth + 1),
+      );
+      const removedProperty = stylizeProperty(
+        addSignToKey(signsMap[types.removed]),
+        stylizeValue(values.valueBefore, depth + 1),
+      );
 
       return [removedProperty, addedProperty].join('\n');
     }
     case types.nested: {
-      const nestedKey = stylizeKey(propertyIndent, key, signsMap[types.nested]);
       const result = children.map((child) => stylizeNode(child, depth + 1));
-      const wrappedResult = wrapInCurlyBrackets(result, сurrentIndent);
-      const nestedProperty = stylizeProperty(nestedKey, wrappedResult);
-      return nestedProperty;
-    }
-    case types.unchanged: {
-      const unchangedKey = stylizeKey(propertyIndent, key, signsMap[types.unchanged]);
-      const valueBefore = stylizeValue(values.valueBefore, depth + 1);
-      const unchangedProperty = stylizeProperty(unchangedKey, valueBefore);
-      return unchangedProperty;
+      const wrappedResult = wrapInCurlyBrackets(result, makePrefix(depth));
+      return stylizeProperty(
+        addSignToKey(signsMap[type]),
+        wrappedResult,
+      );
     }
     default:
       throw new Error(`non supported node type: ${type}`);
