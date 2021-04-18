@@ -35,7 +35,7 @@ const convertDiffToPlain = (node, pathToKey) => {
       return children.flatMap((child) => convertDiffToPlain(child, `${fullPath}.`));
     }
     case types.unchanged:
-      return '';
+      return null;
     default:
       throw new Error(`non supported node type: ${type}`);
   }
@@ -43,5 +43,5 @@ const convertDiffToPlain = (node, pathToKey) => {
 
 export default (diffTree) => diffTree
   .flatMap((node) => convertDiffToPlain(node, ''))
-  .filter((plainDiff) => plainDiff !== '')
+  .filter((plainDiff) => plainDiff !== null)
   .join('\n');
