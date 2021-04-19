@@ -9,17 +9,16 @@ const __dirname = path.dirname(__filename);
 const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
 const readFile = (filename) => fs.readFileSync(getFixturePath(filename), 'utf-8');
 
+const extentions = ['yml', 'json'];
 const formats = ['stylish', 'plain', 'json'];
+const combinations = extentions.flatMap((extention) => (
+  formats.map((format) => [extention, format])
+));
 const expectedResults = Object.fromEntries(
   formats.map((format) => [format, readFile(`result_${format}.txt`)]),
 );
 
-test.each([
-  ['yml', 'stylish'],
-  ['json', 'stylish'],
-  ['json', 'plain'],
-  ['json', 'json'],
-])('compare two %s files and output in %s format', (dataFormat, format) => {
+test.each(combinations)('compare two %s files and output in %s format', (dataFormat, format) => {
   const pathBefore = getFixturePath(`before.${dataFormat}`);
   const pathAfter = getFixturePath(`after.${dataFormat}`);
   const result = getDifference(pathBefore, pathAfter, format);
