@@ -8,10 +8,10 @@ const makeDiffTree = (obj1, obj2) => {
     const valueBefore = _.get(obj1, key);
     const valueAfter = _.get(obj2, key);
     if (!_.has(obj1, key)) {
-      return { key, type: types.added, values: { valueAfter } };
+      return { key, type: types.added, value: valueAfter };
     }
     if (!_.has(obj2, key)) {
-      return { key, type: types.removed, values: { valueBefore } };
+      return { key, type: types.removed, value: valueBefore };
     }
     if (_.isPlainObject(valueAfter) && _.isPlainObject(valueBefore)) {
       return { key, type: types.nested, children: makeDiffTree(obj1[key], obj2[key]) };
@@ -20,13 +20,11 @@ const makeDiffTree = (obj1, obj2) => {
       return {
         key,
         type: types.updated,
-        values: {
-          valueBefore,
-          valueAfter,
-        },
+        valueBefore,
+        valueAfter,
       };
     }
-    return { key, type: types.unchanged, values: { valueBefore } };
+    return { key, type: types.unchanged, value: valueBefore };
   });
   return result;
 };

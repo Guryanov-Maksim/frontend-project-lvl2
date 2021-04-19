@@ -1,10 +1,6 @@
 import _ from 'lodash';
 import types from '../types.js';
 
-const space = ' ';
-const spacesCount = 4;
-const prefix = space.repeat(spacesCount);
-
 const signsMap = {
   [types.added]: '+',
   [types.removed]: '-',
@@ -13,70 +9,56 @@ const signsMap = {
   [types.updated]: ' ',
 };
 
-const valuesMap = {
-  [types.added]: 'valueAfter',
-  [types.removed]: 'valueBefore',
-  [types.unchanged]: 'valueBefore',
-};
+const space = ' ';
+const spacesCount = 4;
 
-const makePrefix = (depth) => `${prefix.repeat(depth)}`;
+const makePrefix = (depth) => space.repeat(depth * spacesCount);
 
-const wrapInCurlyBrackets = (value, finiteUndent = '') => `{\n${value.join('\n')}\n${finiteUndent}}`;
+const wrapNestedValue = (value, finiteUndent = '') => `{\n${value.join('\n')}\n${finiteUndent}}`;
 
-const stylizeValue = (value, depth) => {
+const stringifyValue = (value, depth) => {
   if (!_.isPlainObject(value)) {
     return value;
   }
   const keys = Object.keys(value);
-  const strylizedProperties = keys.map((key) => {
-    const stylizedValue = stylizeValue(value[key], depth + 1);
-    return `${makePrefix(depth)}${key}: ${stylizedValue}`;
+  const stringifiedProperties = keys.map((key) => {
+    const stringifiedValue = stringifyValue(value[key], depth + 1);
+    const indent = makePrefix(depth);
+    return `${indent}${key}: ${stringifiedValue}`;
   });
-  return wrapInCurlyBrackets(strylizedProperties, makePrefix(depth - 1));
+  return wrapNestedValue(stringifiedProperties, makePrefix(depth - 1));
 };
 
-const prepareKey = (indent, key) => (sign) => `${indent}${space} ${sign} ${key}`;
+const stringifyProperty = (key, type, value, depth) => {
+  const indent = makePrefix(depth - 1);
+  const sign = signsMap[type];
+  const stringifiedValue = stringifyValue(value, depth + 1);
 
-const stylizeProperty = (key, value) => `${key}: ${value}`;
+  return `${indent}  ${sign} ${key}: ${stringifiedValue}`;
+};
 
-const stylizeNode = (node, depth) => {
+const stringifyNode = (node, depth) => {
   const {
     key,
     type,
-    values,
     children,
   } = node;
-
-  const addSignToKey = prepareKey(makePrefix(depth - 1), key);
 
   switch (type) {
     case types.added:
     case types.removed:
     case types.unchanged: {
-      return stylizeProperty(
-        addSignToKey(signsMap[type]),
-        stylizeValue(values[valuesMap[type]], depth + 1),
-      );
+      return stringifyProperty(key, type, node.value, depth);
     }
     case types.updated: {
-      const addedProperty = stylizeProperty(
-        addSignToKey(signsMap[types.added]),
-        stylizeValue(values.valueAfter, depth + 1),
-      );
-      const removedProperty = stylizeProperty(
-        addSignToKey(signsMap[types.removed]),
-        stylizeValue(values.valueBefore, depth + 1),
-      );
-
+      const addedProperty = stringifyProperty(key, types.added, node.valueAfter, depth);
+      const removedProperty = stringifyProperty(key, types.removed, node.valueBefore, depth);
       return [removedProperty, addedProperty].join('\n');
     }
     case types.nested: {
-      const result = children.map((child) => stylizeNode(child, depth + 1));
-      const wrappedResult = wrapInCurlyBrackets(result, makePrefix(depth));
-      return stylizeProperty(
-        addSignToKey(signsMap[type]),
-        wrappedResult,
-      );
+      const result = children.map((child) => stringifyNode(child, depth + 1));
+      const wrappedResult = wrapNestedValue(result, makePrefix(depth));
+      return stringifyProperty(key, type, wrappedResult, depth);
     }
     default:
       throw new Error(`non supported node type: ${type}`);
@@ -84,7 +66,6 @@ const stylizeNode = (node, depth) => {
 };
 
 export default (diffTree) => {
-  const result = diffTree.map((node) => stylizeNode(node, 1));
-  const wrappedResult = wrapInCurlyBrackets(result);
-  return wrappedResult;
+  const result = diffTree.map((node) => stringifyNode(node, 1));
+  return wrapNestedValue(result);
 };
