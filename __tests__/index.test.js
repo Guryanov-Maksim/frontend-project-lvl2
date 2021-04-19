@@ -20,16 +20,16 @@ test.each([
   ['json', 'plain'],
   ['json', 'json'],
 ])('compare two %s files and output in %s format', (dataFormat, format) => {
-  const pathToBefore = getFixturePath(`before.${dataFormat}`);
-  const pathToAfter = getFixturePath(`after.${dataFormat}`);
-  const result = getDifference(pathToBefore, pathToAfter, format);
+  const pathBefore = getFixturePath(`before.${dataFormat}`);
+  const pathAfter = getFixturePath(`after.${dataFormat}`);
+  const result = getDifference(pathBefore, pathAfter, format);
   expect(result).toEqual(expectedResults[format]);
 });
 
 test('default behavior', () => {
-  const pathToBefore = getFixturePath('before.json');
-  const pathToAfter = getFixturePath('after.json');
-  const result = getDifference(pathToBefore, pathToAfter);
+  const pathBefore = getFixturePath('before.json');
+  const pathAfter = getFixturePath('after.json');
+  const result = getDifference(pathBefore, pathAfter);
   expect(result).toEqual(expectedResults.stylish);
-  expect(() => getDifference(pathToBefore, pathToAfter, 'wrong')).toThrow();
+  expect(() => getDifference(pathBefore, pathAfter, 'wrong')).toThrow();
 });
